@@ -74,3 +74,7 @@ Git visibility is your choice. The skill does not change `.gitignore` or stage, 
 ## Expected savings
 
 A concise handoff can reduce the context a new session needs compared with replaying a long conversation, especially when the prior discussion is much larger than the handoff. It does not preserve or extend a prompt cache, and it does not guarantee lower total token use or cost: writing and reading the handoff and checking the repository also use context. The benefit is greatest after a long session and may be small for a short task.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
