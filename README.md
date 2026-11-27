@@ -50,11 +50,11 @@ You can name a file or ask the skill to find an outstanding one:
 
 > Continue from handoff.
 
-The skill searches for open handoffs. If there is one, it resumes immediately. If there are several, it asks which one. Periodic updates are on by default in each new session unless you ask to disable them.
+The skill searches for open handoffs. If there is one, it resumes immediately. If there are several, it asks which one. Handoff updates are enabled by default in each new session unless you ask to disable them.
 
-Resume without periodic updates: `Continue from <handoff-file>, no periodic handoff updates.`
+Resume without periodic updates: `Continue from <handoff-file>, no handoff updates.`
 
-The new session checks the handoff against the current repository before continuing. In either update mode, it makes a one-time edit to record the receipt and update setting and correct any stale facts it can verify. The receipt leaves the handoff open. With periodic updates off, it skips milestone updates and still records completion or any required check that blocks it.
+The new session checks the handoff against the current repository before continuing. In either update mode, it makes a one-time edit to record the receipt and update setting and correct any stale facts it can verify. The receipt leaves the handoff open. With handoff updates off, it skips milestone updates and still records completion or any required check that blocks it.
 
 ## What the file contains
 
