@@ -32,29 +32,43 @@ Use a handoff when:
 - A session may end because of a limit or interruption, and you want the latest checkpoint available to resume.
 - You want to continue in a new session or switch providers while keeping the same repository work available.
 
-The skill cannot detect cache expiry or write after a session has stopped. For interruption recovery, turn on handoff updates while the session is still active; the file then reflects the latest saved checkpoint.
+The skill cannot detect cache expiry or write after a session has stopped. For interruption recovery, create or update a handoff while the session is still active; the file is refreshed at later milestones.
 
 ## Start a handoff
 
-To save a snapshot and keep it updated as work proceeds, say:
+To save a snapshot and refresh it at later milestones, say:
 
 > Do this task; ready to handoff.
+>
+> Save a handoff.
+>
+> Handoff.
+>
+> Save a handoff as API migration.
 
 The skill creates or updates `.ai/session-handoff/YYYY-MM-DD-<task-slug>.md` and refreshes it only at milestones: a completed work item (with its verification result) or a blocker. Decisions are folded into the next milestone update. It does not write after every edit or decision, or while idle, and it keeps the file under about 60 lines.
 
-If you want a one-time snapshot only, ask to save a handoff without saying “ready to handoff.”
+An explicit request to save a handoff is honored even for a short task that is expected to finish in the current session. If a task name is provided, it is used to form the filename slug.
+
+To save a final checkpoint and end the current turn, say:
+
+> Save a handoff and stop.
+>
+> Save progress and stop.
+
+The skill stops making workspace changes, saves or updates the handoff, confirms the path, and ends the turn. It resumes refreshing the handoff at milestones if work continues later in the session.
 
 ## Resume in a new session
 
 You can name a file or ask the skill to find an outstanding one:
 
 > Continue from handoff.
+>
+> Continue from the latest handoff.
 
-The skill searches for open handoffs. If there is one, it resumes immediately. If there are several, it asks which one. Handoff updates are enabled by default in each new session unless you ask to disable them.
+The skill searches for open handoffs. If there is one, it resumes immediately. If there are several and you ask for the latest, it chooses the one with the most recent `Updated` timestamp; otherwise, it asks which one. It refreshes the handoff at later milestones.
 
-Resume without periodic updates: `Continue from <handoff-file>, no handoff updates.`
-
-The new session checks the handoff against the current repository before continuing. In either update mode, it makes a one-time edit to record the receipt and update setting and correct any stale facts it can verify. The receipt leaves the handoff open. With handoff updates off, it skips milestone updates and still records completion or any required check that blocks it.
+The new session checks the handoff against the current repository before continuing and makes a one-time edit to record the receipt and correct stale facts it can verify. The receipt leaves the handoff open. It then refreshes the handoff at milestones and records completion or any required check that blocks it.
 
 ## What the file contains
 

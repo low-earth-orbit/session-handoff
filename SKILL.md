@@ -1,6 +1,6 @@
 ---
 name: session-handoff
-description: Create or update a concise, resumable handoff file when the user says “ready to handoff,” asks to save a handoff or session progress note, or asks to resume from a handoff file. Use for continuing long-running work across sessions or providers in the current repository. Not for simple tasks that will finish in the current session, or for commits, PR descriptions, or long-term memory notes.
+description: Create or update a concise, resumable handoff file when the user says “ready to handoff,” uses “handoff” as a standalone command, asks to save progress, including asking to save progress and stop, or asks to resume from a handoff file. Use for continuing work across sessions or providers in the current repository; do not create handoffs for ordinary short tasks unless explicitly requested. Not for commits, PR descriptions, or long-term memory notes.
 ---
 
 # Session Handoff
@@ -9,12 +9,13 @@ Keep a concise progress snapshot under `.ai/session-handoff/` so the user can re
 
 ## Create or update a handoff
 
-- Treat “ready to handoff” or “ready to handoff anytime” as a request to write the file now and enable handoff updates for this session. A direct request to save a handoff without that wording creates a one-time snapshot unless the user also asks to keep it updated.
-- Use the path `.ai/session-handoff/<YYYY-MM-DD>-<task-slug>.md`. Use the user's local date when known and a 2–5 word lowercase ASCII slug describing the task, containing only letters, digits, and hyphens. Create `.ai/session-handoff/` if needed. Keep the same path for this session and update that file in place at later milestones. If you are unsure which file belongs to this session (for example, after context compaction), find it with the resume search below and check that it matches the current task before writing; if it is unclear, ask the user. If a same-named file exists and is not clearly this session’s handoff, add a numeric suffix rather than overwrite it.
-- After the user has asked to keep a handoff ready, refresh it only at milestones: a work item completed (with its verification result) or a blocker found. Fold decisions into the next milestone update rather than writing for each one. Do not write after every small edit, decision, or tool call.
+- Treat any explicit request to create, update, or save a handoff as a request to write it now and refresh it at later milestones, even if the task is short or expected to finish in this session.
+- Treat a standalone “handoff” command or an explicit request to “save handoff” as a request to create or update the handoff. A mention of “handoff” while discussing the concept is not a request to save. Requests to “continue,” “resume,” or “load” a handoff are resume requests; follow the resume instructions below.
+- If the user clearly asks to save the handoff and stop/end the current turn, save the final checkpoint, confirm its path, and end the turn without starting the next action. This includes phrases such as “save a handoff and stop,” “stop and save handoff,” and “save progress and stop.”
+- Use the path `.ai/session-handoff/<YYYY-MM-DD>-<task-slug>.md`. Use the user's local date when known and a 2–5 word lowercase ASCII slug describing the task, containing only letters, digits, and hyphens. If the user supplies a task name, derive the slug from that name. Create `.ai/session-handoff/` if needed. Keep the same path for this session and update that file in place at later milestones. If you are unsure which file belongs to this session (for example, after context compaction), find it with the resume search below and check that it matches the current task before writing; if it is unclear, ask the user. If a same-named file exists and is not clearly this session’s handoff, add a numeric suffix rather than overwrite it.
+- Refresh the handoff only at milestones: a work item completed (with its verification result) or a blocker found. Fold decisions into the next milestone update rather than writing for each one. Do not write after every small edit, decision, or tool call.
 - Keep the file short and useful to someone who has not seen this conversation: under about 60 lines. When an update would push it past that, condense older progress and drop resolved items instead of appending. Include:
   - `Task status: Open` while work remains; `Complete` once the task is done and the file is kept
-  - `Handoff updates: enabled` or `disabled` for the current session
   - A current `Updated: YYYY-MM-DD HH:MM` timestamp in local time, taken from the `date` command rather than guessed; omit the time if it cannot be determined
   - `Last updated by: <agent/tool name>` when the responsible agent or tool is known
   - Goal and completion criteria
@@ -32,10 +33,7 @@ Keep a concise progress snapshot under `.ai/session-handoff/` so the user can re
 
 ## Resume from a handoff
 
-- When the user asks to continue from a handoff, read the named file. If no exact path is given, search `.ai/session-handoff/*.md` for files with `Task status: Open`, regardless of any `Received on` marker. For files without a task-status field, infer from their contents; if unclear, ask. Resume the only outstanding handoff; if there are multiple, ask the user to choose which one. If there are none, say so.
-- Once the handoff is clear, check it against the current repository state and resume without waiting for an update preference. Use the user's choice for this session if specified. Otherwise, default to handoff updates enabled.
-- On resume, make one update to the handoff in either mode. Record this session's `Handoff updates` setting, correct stale facts you can verify, and add `Received on: YYYY-MM-DD` and `Received by: <agent/tool name>` (when known) near the top. The receipt leaves the handoff open and discoverable.
-- Proceed from the reconciled next action. Refresh the handoff at milestones only when handoff updates are enabled. The completion and required-check rules apply in both modes.
-- A handoff file does not transfer the old conversation automatically. In a new session, the user can choose:
-  - Resume without handoff updates: `Continue from <handoff-file>, no handoff updates.`
-  - Resume and enable handoff updates: `Continue from <handoff-file>`
+- When the user asks to continue from a handoff, read the named file. If no exact path is given, search `.ai/session-handoff/*.md` for files with `Task status: Open`, regardless of any `Received on` marker. For files without a task-status field, infer from their contents; if unclear, ask. Resume the only outstanding handoff; if the user asks for the latest and multiple are open, choose the one with the most recent `Updated` timestamp (use file modification time if timestamps are missing). If multiple are open and no preference is given, ask the user to choose. If there are none, say so.
+- Once the handoff is clear, check it against the current repository state and resume.
+- On resume, make one update to the handoff. Correct stale facts you can verify, and add `Received on: YYYY-MM-DD` and `Received by: <agent/tool name>` (when known) near the top. The receipt still leaves the handoff open and discoverable.
+- Proceed from the reconciled next action. Refresh the handoff at milestones.
